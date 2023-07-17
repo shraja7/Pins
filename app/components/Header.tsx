@@ -1,10 +1,29 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import { HiSearch, HiBell, HiChat } from "react-icons/hi";
 import { signIn, useSession } from "next-auth/react";
+import app from "./../Shared/firebaseConfig";
+import { getFirestore, doc, setDoc } from "firebase/firestore"; // Update import statement
+
 function Header() {
   const { data: session } = useSession();
+  const db = getFirestore(app);
+
+  useEffect(() => {
+    saveUserInfo();
+  }, [session]);
+
+  const saveUserInfo = async () => {
+    if (session?.user) {
+      await setDoc(doc(db, "user", session.user.email), {
+        userName: session.user.name,
+        email: session.user.email,
+        userImage: session.user.image,
+      });
+    }
+  };
+
   console.log(session);
   return (
     <div className="flex gap-3 md:gap-2 items-center p-6 ">
