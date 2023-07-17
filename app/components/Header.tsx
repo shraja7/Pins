@@ -47,7 +47,7 @@ function Header() {
       <HiChat className="text-[40px] text-gray-500" />
       {session?.user ? (
         <Image
-          src="/man.png"
+          src={session?.user?.image}
           alt="user image"
           width={50}
           height={50}
