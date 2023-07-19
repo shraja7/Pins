@@ -4,10 +4,12 @@ import Image from "next/image";
 import { HiSearch, HiBell, HiChat } from "react-icons/hi";
 import { signIn, useSession } from "next-auth/react";
 import app from "./../Shared/firebaseConfig";
-import { getFirestore, doc, setDoc } from "firebase/firestore"; // Update import statement
+import { getFirestore, doc, setDoc } from "firebase/firestore";
+import { useRouter } from "next/navigation";
 
-function Header() {
+const Header = () => {
   const { data: session } = useSession();
+  const router = useRouter();
   const db = getFirestore(app);
 
   useEffect(() => {
@@ -26,7 +28,7 @@ function Header() {
 
   console.log(session);
   return (
-    <div className="flex gap-3 md:gap-2 items-center p-6 ">
+    <div className="flex gap-3 md:gap-2 items-center p-6">
       <Image
         src="/logo.png"
         alt="logo"
@@ -34,27 +36,15 @@ function Header() {
         height={50}
         className="hover:bg-gray-300 p-2 rounded-full cursor-pointer"
       />
-      <button
-        className="bg-black text-white p-2 rounded-full
-      px-4
-      "
-      >
+      <button className="bg-black text-white p-2 rounded-full px-4">
         Home
       </button>
 
-      <button
-        className="font-semibold text-black p-2 rounded-full
-      px-4
-      "
-      >
+      <button className="font-semibold text-black p-2 rounded-full px-4">
         Create
       </button>
 
-      <div
-        className="bg-[#e9e9e9] p-3 flex gap-3 items-center rounded-full w-full
-      hidden md:flex
-      "
-      >
+      <div className="bg-[#e9e9e9] p-3 flex gap-3 items-center rounded-full w-full hidden md:flex">
         <HiSearch className="text-[25px] text-gray-500 md:hidden" />
         <input
           type="text"
@@ -67,6 +57,7 @@ function Header() {
       {session?.user ? (
         <Image
           src={session?.user?.image}
+          onClick={() => router.push("/" + session?.user?.email)}
           alt="user image"
           width={50}
           height={50}
@@ -74,9 +65,7 @@ function Header() {
         />
       ) : (
         <button
-          className="font-semibold text-black p-2 rounded-full
-      px-4
-      "
+          className="font-semibold text-black p-2 rounded-full px-4"
           onClick={() => signIn()}
         >
           Login
@@ -84,6 +73,6 @@ function Header() {
       )}
     </div>
   );
-}
+};
 
 export default Header;
