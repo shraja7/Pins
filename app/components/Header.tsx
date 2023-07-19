@@ -40,7 +40,10 @@ const Header = () => {
         Home
       </button>
 
-      <button className="font-semibold text-black p-2 rounded-full px-4">
+      <button
+        className="font-semibold text-black p-2 rounded-full px-4"
+        onClick={() => router.push("/pin-builder")}
+      >
         Create
       </button>
 
