@@ -6,6 +6,7 @@ import { signIn, useSession } from "next-auth/react";
 import app from "./../Shared/firebaseConfig";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
+import { sign } from "crypto";
 
 const Header = () => {
   const { data: session } = useSession();
@@ -26,6 +27,14 @@ const Header = () => {
     }
   };
 
+  const onCreateClick = () => {
+    if (session) {
+      router.push("/pin-builder");
+    } else {
+      signIn();
+    }
+  };
+
   console.log(session);
   return (
     <div className="flex gap-3 md:gap-2 items-center p-6">
@@ -43,7 +52,7 @@ const Header = () => {
 
       <button
         className="font-semibold text-black p-2 rounded-full px-4"
-        onClick={() => router.push("/pin-builder")}
+        onClick={() => onCreateClick()}
       >
         Create
       </button>

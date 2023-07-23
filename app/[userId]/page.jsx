@@ -1,13 +1,22 @@
 "use client";
-import { getFirestore } from "firebase/firestore";
+
 import React, { useEffect, useState } from "react";
 import app from "../Shared/firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 import UserInfo from "../components/UserInfo.jsx";
+import PinList from "../components/Pins/PinList.jsx";
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 
 const Profile = ({ params }) => {
   const db = getFirestore(app);
   const [userInfo, setUserInfo] = useState();
+  const [listOfPins, setListOfPins] = useState([]);
   useEffect(() => {
     console.log(params.userId.replace("%40", "@"));
     if (params) {
@@ -28,7 +37,39 @@ const Profile = ({ params }) => {
     }
   };
 
-  return <div>{userInfo ? <UserInfo userInfo={userInfo} /> : null}</div>;
+  //getuserPins
+
+  useEffect(() => {
+    if (userInfo) {
+      getUserPins();
+    }
+  }, [userInfo]);
+
+  const getUserPins = async () => {
+    const q = query(
+      collection(db, "pinterest-post"),
+      where("email", "==", userInfo.email)
+    );
+
+    try {
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        // console.log(doc.id, " => ", doc.data());
+        setListOfPins((listOfPins) => [...listOfPins, doc.data()]);
+      });
+    } catch (error) {
+      console.error("Error getting user pins:", error);
+    }
+  };
+
+  return (
+    <div>
+      {userInfo ? <UserInfo userInfo={userInfo} /> : null}
+
+      <PinList listOfPins={listOfPins} />
+    </div>
+  );
 };
 
 export default Profile;
